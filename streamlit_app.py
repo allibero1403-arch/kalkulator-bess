@@ -75,21 +75,23 @@ m1.metric("EBITDA Roczna", f"{ebitda:,.0f} PLN")
 m2.metric("Roczna Rata Kredytu", f"{rata_roczna:,.0f} PLN")
 m3.metric("Wskaźnik DSCR", f"{dscr:.2f}")
 
-# Wykres Struktury
-df_chart = pd.DataFrame({
-    "Źródło Przychodów": ["Rynek Mocy", "Arbitraż (SWAP)"],
-    "Wartość [PLN]": [p_rynek_mocy, p_swap]
+# --- POPRAWIONY WYKRES ---
+st.subheader("Struktura Przychodów Rocznych")
+
+# Tworzymy czystą tabelę danych
+chart_data = pd.DataFrame({
+    "Zrodlo": ["Rynek Mocy", "Arbitraz (SWAP)"],
+    "Wartość": [float(p_rynek_mocy), float(p_swap)] # Wymuszamy format liczbowy
 })
-st.bar_chart(df_chart, x="Źródło Przychodów", y="Wartość [PLN]", color="#004aad")
 
-# Status dla Banku
-if dscr >= 1.25:
-    st.success(f"✅ PROJEKT BANKOWALNY. DSCR {dscr:.2f} spełnia wymogi finansowania dłużnego.")
-else:
-    st.error(f"❌ RYZYKO FINANSOWE. DSCR {dscr:.2f} poniżej progu 1.25. Sprawdź koszty lub spread.")
+# Wyświetlamy wykres z wyraźnym przypisaniem osi
+st.bar_chart(
+    data=chart_data, 
+    x="Zrodlo", 
+    y="Wartość", 
+    color="#004aad",
+    use_container_width=True
+)
 
-# Kapitał własny
-st.info(f"**Wkład Własny (Equity):** {capex_pln - kwota_kredytu:,.0f} PLN | **Kredyt:** {kwota_kredytu:,.0f} PLN")
-
-st.markdown("---")
-st.caption("Kalkulator BESS 10MW/40MWh | Wygenerowano na potrzeby analizy Project Finance.")
+# Dodatkowa tabela pod wykresem dla pewności (możesz usunąć jeśli nie chcesz)
+st.table(chart_data.set_index("Zrodlo"))
